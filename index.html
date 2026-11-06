@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d84336">
+  <title>Pokédex Drawing Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Pokédex Drawing Lab home">
+      <span class="brand-lens" aria-hidden="true"><span></span></span>
+      <span class="brand-copy"><strong>POKÉDEX</strong><small>DRAWING LAB / 001</small></span>
+    </a>
+    <div class="index-status" aria-live="polite">
+      <span class="status-light" id="status-light"></span>
+      <span id="index-status">Connecting to the sprite index...</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="drawing-column" aria-labelledby="drawing-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">FIELD STATION 01</p>
+          <h1 id="drawing-title">Draw a Pokémon</h1>
+        </div>
+        <span class="live-tag"><span></span> LIVE SCAN</span>
+      </div>
+
+      <div class="canvas-frame">
+        <canvas id="drawing-canvas" width="500" height="500" aria-label="Drawing canvas"></canvas>
+        <span class="frame-corner frame-corner-tl" aria-hidden="true"></span>
+        <span class="frame-corner frame-corner-tr" aria-hidden="true"></span>
+        <span class="frame-corner frame-corner-bl" aria-hidden="true"></span>
+        <span class="frame-corner frame-corner-br" aria-hidden="true"></span>
+      </div>
+
+      <div class="drawing-tools">
+        <div class="palette-block">
+          <div class="tool-heading"><span>COLOR DECK</span><span id="active-color-name">Pikachu Yellow</span></div>
+          <div class="palette" id="palette" aria-label="Drawing colors">
+            <button class="swatch is-selected" type="button" data-color="#f6cf32" data-name="Pikachu Yellow" aria-label="Pikachu Yellow" aria-pressed="true" style="--swatch-color:#f6cf32"></button>
+            <button class="swatch" type="button" data-color="#ed8434" data-name="Charizard Orange" aria-label="Charizard Orange" aria-pressed="false" style="--swatch-color:#ed8434"></button>
+            <button class="swatch" type="button" data-color="#42a68b" data-name="Bulbasaur Green" aria-label="Bulbasaur Green" aria-pressed="false" style="--swatch-color:#42a68b"></button>
+            <button class="swatch" type="button" data-color="#56b8b2" data-name="Teal" aria-label="Teal" aria-pressed="false" style="--swatch-color:#56b8b2"></button>
+            <button class="swatch" type="button" data-color="#3476bd" data-name="Squirtle Blue" aria-label="Squirtle Blue" aria-pressed="false" style="--swatch-color:#3476bd"></button>
+            <button class="swatch" type="button" data-color="#8055a6" data-name="Gastly Purple" aria-label="Gastly Purple" aria-pressed="false" style="--swatch-color:#8055a6"></button>
+            <button class="swatch" type="button" data-color="#e98cad" data-name="Jigglypuff Pink" aria-label="Jigglypuff Pink" aria-pressed="false" style="--swatch-color:#e98cad"></button>
+            <button class="swatch" type="button" data-color="#d84336" data-name="Poké Ball Red" aria-label="Poké Ball Red" aria-pressed="false" style="--swatch-color:#d84336"></button>
+            <button class="swatch" type="button" data-color="#956b47" data-name="Brown" aria-label="Brown" aria-pressed="false" style="--swatch-color:#956b47"></button>
+            <button class="swatch" type="button" data-color="#888b88" data-name="Onix Gray" aria-label="Onix Gray" aria-pressed="false" style="--swatch-color:#888b88"></button>
+            <button class="swatch swatch-dark" type="button" data-color="#24282b" data-name="Black" aria-label="Black" aria-pressed="false" style="--swatch-color:#24282b"></button>
+            <button class="swatch swatch-light" type="button" data-color="#ffffff" data-name="White" aria-label="White" aria-pressed="false" style="--swatch-color:#ffffff"></button>
+            <label class="custom-color" title="Choose a custom color">
+              <span aria-hidden="true">+</span>
+              <input id="custom-color" type="color" value="#f6cf32" aria-label="Choose a custom color">
+            </label>
+          </div>
+        </div>
+
+        <div class="tool-row">
+          <label class="brush-control" for="brush-size">
+            <span class="tool-heading">BRUSH SIZE <output id="brush-value" for="brush-size">8 px</output></span>
+            <input id="brush-size" type="range" min="2" max="36" value="8">
+          </label>
+          <button class="tool-button eraser-button" id="eraser-toggle" type="button" aria-pressed="false" title="Toggle eraser">
+            <span class="eraser-icon" aria-hidden="true">⌫</span> Eraser
+          </button>
+        </div>
+        <div class="action-row">
+          <button class="tool-button" id="undo-button" type="button" disabled><span aria-hidden="true">↶</span> Undo stroke</button>
+          <button class="tool-button clear-button" id="clear-button" type="button"><span aria-hidden="true">×</span> Clear canvas</button>
+        </div>
+      </div>
+      <p class="canvas-note">Your sketch stays in this browser. Draw a few strokes to start the scan.</p>
+    </section>
+
+    <aside class="scanner-column" aria-label="Pokédex scanner">
+      <section class="predictions-section" aria-labelledby="prediction-title">
+        <div class="section-heading scanner-heading">
+          <div>
+            <p class="eyebrow">SPECIMEN MATCHING</p>
+            <h2 id="prediction-title">Top 5 predictions</h2>
+          </div>
+          <span class="scan-counter" id="scan-counter">WAITING</span>
+        </div>
+
+        <ol class="leaderboard" id="leaderboard" aria-live="polite" aria-label="Live Pokémon predictions">
+          <li class="prediction-row is-empty">
+            <span class="rank">01</span><span class="sprite-placeholder">?</span>
+            <span class="prediction-info"><span class="pokemon-name">Waiting for a sketch</span><span class="score-track"><span class="score-fill" style="width:0%"></span></span></span>
+            <span class="confidence">--%</span>
+          </li>
+          <li class="prediction-row is-empty">
+            <span class="rank">02</span><span class="sprite-placeholder">?</span>
+            <span class="prediction-info"><span class="pokemon-name">Color and shape scan</span><span class="score-track"><span class="score-fill" style="width:0%"></span></span></span>
+            <span class="confidence">--%</span>
+          </li>
+          <li class="prediction-row is-empty">
+            <span class="rank">03</span><span class="sprite-placeholder">?</span>
+            <span class="prediction-info"><span class="pokemon-name">Starting soon</span><span class="score-track"><span class="score-fill" style="width:0%"></span></span></span>
+            <span class="confidence">--%</span>
+          </li>
+          <li class="prediction-row is-empty">
+            <span class="rank">04</span><span class="sprite-placeholder">?</span>
+            <span class="prediction-info"><span class="pokemon-name">Make a few marks</span><span class="score-track"><span class="score-fill" style="width:0%"></span></span></span>
+            <span class="confidence">--%</span>
+          </li>
+          <li class="prediction-row is-empty">
+            <span class="rank">05</span><span class="sprite-placeholder">?</span>
+            <span class="prediction-info"><span class="pokemon-name">151 species indexed</span><span class="score-track"><span class="score-fill" style="width:0%"></span></span></span>
+            <span class="confidence">--%</span>
+          </li>
+        </ol>
+        <p class="match-note">Percentages show visual similarity, not a calibrated probability.</p>
+      </section>
+
+      <section class="vision-panel" aria-labelledby="vision-title">
+        <div class="vision-panel-header">
+          <div>
+            <p class="eyebrow">FEATURE EXTRACTION</p>
+            <h2 id="vision-title">How the computer sees it</h2>
+          </div>
+          <span class="vision-mark" aria-hidden="true">16×16</span>
+        </div>
+        <div class="vision-content">
+          <div class="preview-wrap">
+            <canvas id="preview-canvas" width="16" height="16" aria-label="Normalized 16 by 16 drawing preview"></canvas>
+          </div>
+          <dl class="feature-readout">
+            <div><dt>ASPECT</dt><dd id="aspect-readout">--</dd></div>
+            <div><dt>FILL</dt><dd id="fill-readout">--</dd></div>
+            <div><dt>COLORS</dt><dd id="color-readout">--</dd></div>
+          </dl>
+        </div>
+        <p class="vision-caption">Transparent space is cropped away. The sketch is fitted into a 16×16 grid, then its color balance and silhouette are compared with the sprite index.</p>
+      </section>
+
+      <section class="index-panel" aria-labelledby="index-title">
+        <div class="index-panel-heading"><h2 id="index-title">Sprite index</h2><span id="sprite-count">0 / 151</span></div>
+        <progress id="sprite-progress" max="151" value="0" aria-label="Pokémon sprite preprocessing progress"></progress>
+        <p id="load-message" class="load-message" aria-live="polite">Fetching the Gen 1 species list...</p>
+      </section>
+      <footer class="page-footer">A tiny in-browser vision experiment <span>·</span> No account, server, or API key</footer>
+    </aside>
+  </main>
+</body>
+</html>
